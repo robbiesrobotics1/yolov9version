@@ -3,22 +3,16 @@ import time
 import streamlit as st
 import cv2
 from pytube import YouTube
-
+import torch
 import settings
 
 
 def load_model(model_path):
-    """
-    Loads a YOLO object detection model from the specified model_path.
-
-    Parameters:
-        model_path (str): The path to the YOLO model file.
-
-    Returns:
-        A YOLO object detection model.
-    """
     model = YOLO(model_path)
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model.to(device)
     return model
+
 
 
 def display_tracker_options():
@@ -31,46 +25,27 @@ def display_tracker_options():
 
 
 def _display_detected_frames(conf, model, st_frame, image, is_display_tracking=None, tracker=None):
-    """
-    Display the detected objects on a video frame using the YOLOv8 model.
-
-    Args:
-    - conf (float): Confidence threshold for object detection.
-    - model (YoloV8): A YOLOv8 object detection model.
-    - st_frame (Streamlit object): A Streamlit object to display the detected video.
-    - image (numpy array): A numpy array representing the video frame.
-    - is_display_tracking (bool): A flag indicating whether to display object tracking (default=None).
-
-    Returns:
-    None
-    """
-
-    # Resize the image to a standard size
     image = cv2.resize(image, (720, int(720*(9/16))))
+    tensor_image = torch.from_numpy(image).to('cuda').float()
+    tensor_image = tensor_image.permute(2, 0, 1).unsqueeze(0)  # Needed format for model input
 
-    # Display object tracking, if specified
     if is_display_tracking:
-        res = model.track(image, conf=conf, persist=True, tracker=tracker)
+        res = model.track(tensor_image, conf=conf, persist=True, tracker=tracker)
     else:
-        # Predict the objects in the image using the YOLOv8 model
-        res = model.predict(image, conf=conf)
+        res = model.predict(tensor_image, conf=conf)
 
-    # # Plot the detected objects on the video frame
     res_plotted = res[0].plot()
-    st_frame.image(res_plotted,
-                   caption='Detected Video',
-                   channels="BGR",
-                   use_column_width=True
-                   )
+    st_frame.image(res_plotted, caption='Detected Video', channels="BGR", use_column_width=True)
+
 
 
 def play_youtube_video(conf, model):
     """
-    Plays a webcam stream. Detects Objects in real-time using the YOLOv8 object detection model.
+    Plays a webcam stream. Detects Objects in real-time using the YOLOv9 object detection model.
 
     Parameters:
-        conf: Confidence of YOLOv8 model.
-        model: An instance of the `YOLOv8` class containing the YOLOv8 model.
+        conf: Confidence of YOLOv9 model.
+        model: An instance of the `YOLOv9` class containing the YOLOv9 model.
 
     Returns:
         None
@@ -108,11 +83,11 @@ def play_youtube_video(conf, model):
 
 def play_rtsp_stream(conf, model):
     """
-    Plays an rtsp stream. Detects Objects in real-time using the YOLOv8 object detection model.
+    Plays an rtsp stream. Detects Objects in real-time using the YOLOv9 object detection model.
 
     Parameters:
-        conf: Confidence of YOLOv8 model.
-        model: An instance of the `YOLOv8` class containing the YOLOv8 model.
+        conf: Confidence of YOLOv9 model.
+        model: An instance of the `YOLOv9` class containing the YOLOv9 model.
 
     Returns:
         None
@@ -150,11 +125,11 @@ def play_rtsp_stream(conf, model):
 
 def play_webcam(conf, model):
     """
-    Plays a webcam stream. Detects Objects in real-time using the YOLOv8 object detection model.
+    Plays a webcam stream. Detects Objects in real-time using the YOLOv9 object detection model.
 
     Parameters:
-        conf: Confidence of YOLOv8 model.
-        model: An instance of the `YOLOv8` class containing the YOLOv8 model.
+        conf: Confidence of YOLOv9 model.
+        model: An instance of the `YOLOv9` class containing the YOLOv9 model.
 
     Returns:
         None
@@ -187,11 +162,11 @@ def play_webcam(conf, model):
 
 def play_stored_video(conf, model):
     """
-    Plays a stored video file. Tracks and detects objects in real-time using the YOLOv8 object detection model.
+    Plays a stored video file. Tracks and detects objects in real-time using the YOLOv9 object detection model.
 
     Parameters:
-        conf: Confidence of YOLOv8 model.
-        model: An instance of the `YOLOv8` class containing the YOLOv8 model.
+        conf: Confidence of YOLOv9 model.
+        model: An instance of the `YOLOv9` class containing the YOLOv9 model.
 
     Returns:
         None

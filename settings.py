@@ -35,12 +35,12 @@ VIDEOS_DICT = {
 
 # ML Model config
 MODEL_DIR = ROOT / 'weights'
-DETECTION_MODEL = MODEL_DIR / 'yolov8n.pt'
+DETECTION_MODEL = MODEL_DIR / 'yolov9c.pt'
 # In case of your custome model comment out the line above and
 # Place your custom model pt file name at the line below 
 # DETECTION_MODEL = MODEL_DIR / 'my_detection_model.pt'
 
-SEGMENTATION_MODEL = MODEL_DIR / 'yolov8n-seg.pt'
+SEGMENTATION_MODEL = MODEL_DIR / 'yolov9c-seg.pt'
 
 # Webcam
 WEBCAM_PATH = 0

@@ -11,17 +11,17 @@ import helper
 
 # Setting page layout
 st.set_page_config(
-    page_title="Object Detection using YOLOv8",
-    page_icon="🤖",
+    page_title="Recognize Demo App",
+    page_icon=":)",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # Main page heading
-st.title("Object Detection And Tracking using YOLOv8")
+st.title("Object Detection, Tracking, and Segmentation using YOLOv9")
 
 # Sidebar
-st.sidebar.header("ML Model Config")
+st.sidebar.header("Choose Your Model")
 
 # Model Options
 model_type = st.sidebar.radio(
